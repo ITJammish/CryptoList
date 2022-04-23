@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.itj.cryptoviewer">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name=".CryptoViewerApplication"
         android:allowBackup="true"
@@ -11,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CryptoViewer">
         <activity
-            android:name=".cryptolist.CryptoListActivity"
+            android:name="com.itj.cryptoviewer.view.cryptolist.CryptoViewerActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,19 +1,30 @@
 package com.itj.cryptoviewer.di
 
-import android.content.Context
-import com.itj.cryptoviewer.cryptolist.di.CryptoListActivityComponent
+import android.app.Application
+import com.itj.cryptoviewer.CryptoViewerApplication
 import dagger.BindsInstance
 import dagger.Component
+import dagger.android.AndroidInjectionModule
+import dagger.android.AndroidInjector
 import javax.inject.Singleton
 
 @Singleton
-@Component
-interface AppComponent {
+@Component(
+    modules = [
+        AndroidInjectionModule::class,
+        AppModule::class,
+        AppActivityBindings::class,
+        DataModule::class,
+    ]
+)
+interface AppComponent : AndroidInjector<CryptoViewerApplication> {
 
-    @Component.Factory
-    interface Factory {
-        fun create(@BindsInstance context: Context): AppComponent
+    @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        fun application(application: Application): Builder
+
+        fun build(): AppComponent
     }
-
-    fun cryptoListComponent(): CryptoListActivityComponent.Factory
 }
