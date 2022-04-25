@@ -9,8 +9,29 @@ class FetchCryptoRepositoryImpl @Inject constructor(
 ) : FetchCryptoRepository {
 
     override suspend fun requestCryptoInformation() {
-        val hiff = "hewllooo"
         val response = service.getCoins()
-        val hi = "hewllooo"
+        response?.let {
+            if (it.isSuccessful) {
+                // update the database with the result
+                val myResponse = it.body()
+            } else {
+                // return/notify of network issue
+            }
+        }
+    }
+
+    override suspend fun requestCryptoInformationTest(): CryptoServiceGetCoinsResponse {
+        val response = service.getCoins()
+        response?.let {
+            if (it.isSuccessful) {
+                // update the database with the result
+                it.body()?.let { cryptoResponse ->
+                    return cryptoResponse
+                } ?: return CryptoServiceGetCoinsResponse("testFailed", null)
+            } else {
+                // return/notify of network issue
+                return CryptoServiceGetCoinsResponse("testFailed", null)
+            }
+        } ?: return CryptoServiceGetCoinsResponse("testFailed", null)
     }
 }
