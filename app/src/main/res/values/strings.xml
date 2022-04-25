@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CryptoViewer</string>
+    <string name="refresh">Refresh</string>
 </resources>

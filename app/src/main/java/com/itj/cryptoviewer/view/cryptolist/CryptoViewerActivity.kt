@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.itj.cryptoviewer.R
 import com.itj.cryptoviewer.di.viewmodel.ViewModelFactory
@@ -16,23 +15,37 @@ class CryptoViewerActivity : AppCompatActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
+    @Inject
+    lateinit var layoutManager: RecyclerView.LayoutManager
+
+    @Inject
+    lateinit var cryptoListAdapter: CryptoSummaryRecyclerViewAdapter
+
+    private val viewModel: CryptoListViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[CryptoListViewModel::class.java]
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        bindViews()
+        bindData()
+    }
 
-        val viewModel = ViewModelProvider(this, viewModelFactory)[CryptoListViewModel::class.java]
-
+    private fun bindViews() {
         findViewById<Button>(R.id.message_button).setOnClickListener {
             viewModel.fetchData()
         }
-        val rvAdapter = CryptoSummaryRecyclerViewAdapter()
         findViewById<RecyclerView>(R.id.crypto_summary_recycler_view).also {
-            it.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false) // can inject this
-            it.adapter = rvAdapter
+            it.layoutManager = layoutManager
+            it.adapter = cryptoListAdapter
         }
+    }
+
+    private fun bindData() {
         viewModel.testData.observe(this) {
-            rvAdapter.setData(it)
+            cryptoListAdapter.setData(it)
         }
     }
 }
