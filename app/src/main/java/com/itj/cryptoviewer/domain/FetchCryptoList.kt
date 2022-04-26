@@ -1,7 +1,12 @@
 package com.itj.cryptoviewer.domain
 
-import com.itj.cryptoviewer.data.CryptoServiceGetCoinsResponse
 import com.itj.cryptoviewer.data.FetchCryptoRepository
+import com.itj.cryptoviewer.data.utils.ResourceErrorType.Connection
+import com.itj.cryptoviewer.data.utils.fold
+import com.itj.cryptoviewer.domain.model.Coin
+import com.itj.cryptoviewer.domain.utils.UseCaseResult
+import com.itj.cryptoviewer.domain.utils.UseCaseResult.GenericErrorResult
+import com.itj.cryptoviewer.domain.utils.UseCaseResult.NetworkErrorResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,10 +18,17 @@ class FetchCryptoList @Inject constructor(
     @Named("ForFetchCryptoList") private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
-    suspend operator fun invoke(): CryptoServiceGetCoinsResponse {
+    suspend operator fun invoke(): UseCaseResult<List<Coin>> {
         return withContext(dispatcher) {
-//        repository.requestCryptoInformation()
-            repository.requestCryptoInformationTest()
+            repository.requestCryptoInformation().fold(
+                onSuccess = { coins -> UseCaseResult.SuccessResult(coins) },
+                onFailure = { errorType ->
+                    when (errorType) {
+                        is Connection -> NetworkErrorResult
+                        else -> GenericErrorResult
+                    }
+                }
+            )
         }
     }
 }

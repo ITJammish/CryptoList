@@ -4,36 +4,36 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.itj.cryptoviewer.data.GetCoinsCoin
 import com.itj.cryptoviewer.domain.FetchCryptoList
-import kotlinx.coroutines.Dispatchers
+import com.itj.cryptoviewer.domain.model.Coin
+import com.itj.cryptoviewer.domain.utils.UseCaseResult.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-// TODO unit test - revisit
 class CryptoListViewModel @Inject constructor(
     private var fetchCryptoList: FetchCryptoList
 ) : ViewModel() {
 
-    val testData: LiveData<List<GetCoinsCoin>>
+    val testData: LiveData<List<Coin>>
         get() = _testData
-    private val _testData = MutableLiveData<List<GetCoinsCoin>>(emptyList())
+    private val _testData = MutableLiveData<List<Coin>>(emptyList())
 
     init {
-        fetchData()
+        callCryptoListUseCase()
     }
 
     fun fetchData() {
         callCryptoListUseCase()
     }
 
+    // TODO consume and display generic/network error messages
     private fun callCryptoListUseCase() {
         viewModelScope.launch {
-            val result = fetchCryptoList().data?.coins
-            // todo pre-lunch bug: setting of null values (shouldn't be an issue post-layer mapping)
-            //  reproduce by spamming 'refresh'
-            _testData.value = result
+            _testData.value = when (val result = fetchCryptoList()) {
+                is SuccessResult -> result.value
+                is GenericErrorResult -> emptyList()
+                is NetworkErrorResult -> emptyList()
+            }
         }
     }
 }

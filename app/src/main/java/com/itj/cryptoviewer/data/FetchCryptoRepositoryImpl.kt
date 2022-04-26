@@ -1,35 +1,31 @@
 package com.itj.cryptoviewer.data
 
+import com.itj.cryptoviewer.data.utils.Resource
+import com.itj.cryptoviewer.data.utils.Resource.Error
+import com.itj.cryptoviewer.data.utils.Resource.Success
+import com.itj.cryptoviewer.data.utils.ResourceErrorType
+import com.itj.cryptoviewer.domain.model.Coin
 import javax.inject.Inject
 
 class FetchCryptoRepositoryImpl @Inject constructor(
-    private val service: CryptoService
+    private val service: CryptoService,
+    private val mapper: NetworkCoinToDomainCoinMapper,
 ) : FetchCryptoRepository {
 
-//    override suspend fun requestCryptoInformation() {
-//        val response = service.getCoins()
-//        response?.let {
-//            if (it.isSuccessful) {
-//                // update the database with the result
-//                val myResponse = it.body()
-//            } else {
-//                // return/notify of network issue
-//            }
-//        }
-//    }
-
-    override suspend fun requestCryptoInformationTest(): CryptoServiceGetCoinsResponse {
+    override suspend fun requestCryptoInformation(): Resource<List<Coin>> {
         val response = service.getCoins()
         response?.let {
             if (it.isSuccessful) {
-                // update the database with the result
+                // todo update the database with the result
                 it.body()?.let { cryptoResponse ->
-                    return cryptoResponse
-                } ?: return CryptoServiceGetCoinsResponse("testFailed - body was null", null)
+                    return cryptoResponse.data?.coins
+                        ?.map { networkCoin -> mapper.mapNetworkCoinToDomainCoin(networkCoin) }
+                        ?.let { coinList -> Success(coinList) }
+                        ?: Error(ResourceErrorType.Generic)
+                } ?: return Error(ResourceErrorType.Generic)
             } else {
-                // return/notify of network issue
-                return CryptoServiceGetCoinsResponse("testFailed - request unsuccessful", null)
+                return Error(ResourceErrorType.Connection)
             }
-        } ?: return CryptoServiceGetCoinsResponse("testFailed - response was null", null)
+        } ?: return Error(ResourceErrorType.Generic)
     }
 }

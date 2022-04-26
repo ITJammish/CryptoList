@@ -1,4 +1,4 @@
-package com.itj.cryptoviewer.data
+package com.itj.cryptoviewer.data.model
 
 import com.google.gson.annotations.SerializedName
 

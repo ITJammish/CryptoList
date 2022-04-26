@@ -10,13 +10,13 @@ import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.itj.cryptoviewer.R
-import com.itj.cryptoviewer.data.GetCoinsCoin
+import com.itj.cryptoviewer.domain.model.Coin
 import kotlinx.android.synthetic.main.item_view_coin_summary.view.*
 import javax.inject.Inject
 
 class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adapter<CryptoSummaryViewHolder>() {
 
-    private var data: List<GetCoinsCoin> = emptyList()
+    private var data: List<Coin> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CryptoSummaryViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_view_coin_summary, parent, false)
@@ -31,7 +31,7 @@ class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adap
         return data.size
     }
 
-    fun setData(coins: List<GetCoinsCoin>) {
+    fun setData(coins: List<Coin>) {
         // set to local field
         data = coins
         // prompt adapter refresh
@@ -46,8 +46,8 @@ class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adap
 class CryptoSummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     // TODO update with Domain model
-    fun bind(coin: GetCoinsCoin) {
-        itemView.setBackgroundColor(Color.parseColor(coin.color?.withTranslucency()))
+    fun bind(coin: Coin) {
+        itemView.setBackgroundColor(Color.parseColor(coin.color.withTranslucency()))
         itemView.coin_name_view.text = coin.name
         fetchAndBindIcon(coin.iconUrl)
         itemView.coin_symbol_view.text = coin.symbol
@@ -117,7 +117,7 @@ class CryptoSummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
 
     private fun String.withTranslucency(): String {
         if (this.contains('#') && this.length == 7) {
-            return "#4D${this.split('#')[1]}"
+            return "#66${this.split('#')[1]}"
         }
         return this
     }
