@@ -18,7 +18,7 @@ class CryptoListViewModel @Inject constructor(
 
     val testData: LiveData<List<GetCoinsCoin>>
         get() = _testData
-    private val _testData = MutableLiveData<List<GetCoinsCoin>>()
+    private val _testData = MutableLiveData<List<GetCoinsCoin>>(emptyList())
 
     init {
         fetchData()
@@ -29,11 +29,11 @@ class CryptoListViewModel @Inject constructor(
     }
 
     private fun callCryptoListUseCase() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val result = fetchCryptoList().data?.coins
-            withContext(Dispatchers.Main) {
-                _testData.value = result
-            }
+            // todo pre-lunch bug: setting of null values (shouldn't be an issue post-layer mapping)
+            //  reproduce by spamming 'refresh'
+            _testData.value = result
         }
     }
 }

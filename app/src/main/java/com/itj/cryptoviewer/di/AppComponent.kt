@@ -14,7 +14,7 @@ import javax.inject.Singleton
         AndroidInjectionModule::class,
         AppModule::class,
         AppActivityBindings::class,
-        DataModule::class,
+        DomainModule::class,
     ]
 )
 interface AppComponent : AndroidInjector<CryptoViewerApplication> {
