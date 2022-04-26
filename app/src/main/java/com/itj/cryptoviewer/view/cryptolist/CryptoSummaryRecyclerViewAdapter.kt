@@ -11,7 +11,7 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.itj.cryptoviewer.R
 import com.itj.cryptoviewer.data.GetCoinsCoin
-import kotlinx.android.synthetic.main.view_coin_summary.view.*
+import kotlinx.android.synthetic.main.item_view_coin_summary.view.*
 import javax.inject.Inject
 
 class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adapter<CryptoSummaryViewHolder>() {
@@ -19,7 +19,7 @@ class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adap
     private var data: List<GetCoinsCoin> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CryptoSummaryViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.view_coin_summary, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_view_coin_summary, parent, false)
         return CryptoSummaryViewHolder(itemView)
     }
 

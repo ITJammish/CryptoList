@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+// TODO unit test - revisit
 class CryptoListViewModel @Inject constructor(
     private var fetchCryptoList: FetchCryptoList
 ) : ViewModel() {
@@ -18,6 +19,10 @@ class CryptoListViewModel @Inject constructor(
     val testData: LiveData<List<GetCoinsCoin>>
         get() = _testData
     private val _testData = MutableLiveData<List<GetCoinsCoin>>()
+
+    init {
+        fetchData()
+    }
 
     fun fetchData() {
         callCryptoListUseCase()

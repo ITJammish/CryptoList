@@ -4,12 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp">
+    android:padding="16dp"
+    tools:background="#4Df7931A">
 
     <TextView
         android:id="@+id/coin_name_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="28sp"
         app:layout_constraintBottom_toTopOf="@+id/coin_image_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -20,8 +22,10 @@
 
     <ImageView
         android:id="@+id/coin_image_view"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/content_description_crypto_currency_icon"
+        android:focusable="false"
         app:layout_constraintBottom_toTopOf="@+id/coin_market_container"
         app:layout_constraintEnd_toStartOf="@+id/coin_symbol_view"
         app:layout_constraintHorizontal_bias="0"
@@ -35,18 +39,21 @@
         android:id="@+id/coin_symbol_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@id/coin_image_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/coin_image_view"
         app:layout_constraintTop_toTopOf="@id/coin_image_view"
-        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_bias="0.5"
         tools:text="BTC" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/coin_market_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,6 +63,7 @@
             android:id="@+id/coin_market_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/coin_change"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -63,15 +71,18 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="$38,000.12" />
 
-        <!-- todo red/green colouring based on negative/positive value -->
         <TextView
             android:id="@+id/coin_change"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/background_coin_change"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/coin_market_value"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="-1.4" />
+            tools:text="-1.4"
+            tools:textColor="@color/red_strong" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

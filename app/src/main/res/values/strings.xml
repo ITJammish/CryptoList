@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CryptoViewer</string>
     <string name="refresh">Refresh</string>
+    <string name="content_description_crypto_currency_icon">Crypto currency icon.</string>
 </resources>

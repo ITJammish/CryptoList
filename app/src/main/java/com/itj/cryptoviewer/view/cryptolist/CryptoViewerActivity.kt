@@ -1,7 +1,8 @@
 package com.itj.cryptoviewer.view.cryptolist
 
 import android.os.Bundle
-import android.widget.Button
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -33,10 +34,19 @@ class CryptoViewerActivity : AppCompatActivity() {
         bindData()
     }
 
-    private fun bindViews() {
-        findViewById<Button>(R.id.message_button).setOnClickListener {
-            viewModel.fetchData()
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_crypto_list, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_item_refresh -> viewModel.fetchData()
         }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun bindViews() {
         findViewById<RecyclerView>(R.id.crypto_summary_recycler_view).also {
             it.layoutManager = layoutManager
             it.adapter = cryptoListAdapter
