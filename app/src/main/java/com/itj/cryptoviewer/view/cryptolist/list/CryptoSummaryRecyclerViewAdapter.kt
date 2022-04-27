@@ -1,10 +1,11 @@
-package com.itj.cryptoviewer.view.cryptolist
+package com.itj.cryptoviewer.view.cryptolist.list
 
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.ImageLoader
 import coil.decode.SvgDecoder
@@ -32,14 +33,11 @@ class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adap
     }
 
     fun setData(coins: List<Coin>) {
-        // set to local field
-        data = coins
-        // prompt adapter refresh
-        notifyDataSetChanged()
+        val diffUtilCallback = CryptoSummaryDiffUtilCallback(oldList = data, newList = coins)
+        val diffResult = DiffUtil.calculateDiff(diffUtilCallback)
 
-        // TODO
-        //  can also create a diff util -> have binding methods in ViewHolder per view so we can
-        //  efficiently update only the views with changed data.
+        data = coins
+        diffResult.dispatchUpdatesTo(this)
     }
 }
 

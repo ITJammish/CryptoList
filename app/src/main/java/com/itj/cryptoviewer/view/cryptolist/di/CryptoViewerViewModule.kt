@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.itj.cryptoviewer.di.viewmodel.ViewModelFactory
 import com.itj.cryptoviewer.di.viewmodel.ViewModelKey
 import com.itj.cryptoviewer.view.cryptolist.CryptoListViewModel
-import com.itj.cryptoviewer.view.cryptolist.CryptoSummaryRecyclerViewAdapter
 import com.itj.cryptoviewer.view.cryptolist.CryptoViewerActivity
+import com.itj.cryptoviewer.view.cryptolist.list.CryptoSummaryRecyclerViewAdapter
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

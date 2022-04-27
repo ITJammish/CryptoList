@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.itj.cryptoviewer.R
 import com.itj.cryptoviewer.di.viewmodel.ViewModelFactory
+import com.itj.cryptoviewer.view.cryptolist.list.CryptoSummaryRecyclerViewAdapter
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
