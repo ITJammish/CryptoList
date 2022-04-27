@@ -1,7 +1,6 @@
 package com.itj.cryptoviewer.view.cryptolist.list
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,8 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.itj.cryptoviewer.R
 import com.itj.cryptoviewer.domain.model.Coin
+import com.itj.cryptoviewer.view.cryptolist.list.CryptoSummaryDiffUtilCallback.ChangePayload.UpdateChange
+import com.itj.cryptoviewer.view.cryptolist.list.CryptoSummaryDiffUtilCallback.ChangePayload.UpdatePrice
 import kotlinx.android.synthetic.main.item_view_coin_summary.view.*
 import javax.inject.Inject
 
@@ -26,6 +27,19 @@ class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adap
 
     override fun onBindViewHolder(holder: CryptoSummaryViewHolder, position: Int) {
         holder.bind(data[position])
+    }
+
+    override fun onBindViewHolder(holder: CryptoSummaryViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty()) {
+            (payloads[0] as ArrayList<*>).forEach { payload ->
+                when (payload) {
+                    is UpdateChange -> holder.bindMarketChange(data[position].change)
+                    is UpdatePrice -> holder.bindMarketValue(data[position].price)
+                }
+            }
+        } else {
+            super.onBindViewHolder(holder, position, emptyList())
+        }
     }
 
     override fun getItemCount(): Int {
@@ -43,7 +57,6 @@ class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adap
 
 class CryptoSummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    // TODO update with Domain model
     fun bind(coin: Coin) {
         itemView.setBackgroundColor(Color.parseColor(coin.color.withTranslucency()))
         itemView.coin_name_view.text = coin.name
@@ -54,14 +67,11 @@ class CryptoSummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
     }
 
     fun bindMarketValue(coinMarketValue: String?) {
-        itemView.coin_market_value.text = coinMarketValue?.let {
-            "$${it.withTwoDecimalPlaces()}"
-        } ?: "NA"
+        itemView.coin_market_value.text = coinMarketValue?.let { "$$it" } ?: "NA"
     }
 
     fun bindMarketChange(coinChange: String?) {
-        // todo make pill background to make coloured text stand out, that flips with theming
-        val formattedChange = coinChange?.withTwoDecimalPlaces() ?: "NA"
+        val formattedChange = coinChange ?: "NA"
 
         with(itemView.coin_change) {
             text = formattedChange
@@ -99,18 +109,6 @@ class CryptoSummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
 
     private fun String.isNegativeNumber(): Boolean {
         return this.contains('-')
-    }
-
-    private fun String.withTwoDecimalPlaces(): String {
-        val doubleValue: Double?
-        try {
-            doubleValue = this.toDouble()
-        } catch (exception: NumberFormatException) {
-            Log.e("CryptoSummaryRecyclerViewAdapter", exception.toString())
-            return this
-        }
-
-        return String.format("%.2f", doubleValue)
     }
 
     private fun String.withTranslucency(): String {

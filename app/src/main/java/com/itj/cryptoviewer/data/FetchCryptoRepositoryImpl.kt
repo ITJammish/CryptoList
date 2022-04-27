@@ -7,6 +7,8 @@ import com.itj.cryptoviewer.data.utils.ResourceErrorType
 import com.itj.cryptoviewer.domain.model.Coin
 import javax.inject.Inject
 
+// should store result data in database
+// another usecase/method should expose database data and allow views to observe/attach
 class FetchCryptoRepositoryImpl @Inject constructor(
     private val service: CryptoService,
     private val mapper: NetworkCoinToDomainCoinMapper,
