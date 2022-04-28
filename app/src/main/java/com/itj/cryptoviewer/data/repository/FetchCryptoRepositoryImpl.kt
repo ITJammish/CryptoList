@@ -10,14 +10,13 @@ import com.itj.cryptoviewer.data.utils.Resource.Error
 import com.itj.cryptoviewer.data.utils.Resource.Success
 import com.itj.cryptoviewer.data.utils.ResourceErrorType.Connection
 import com.itj.cryptoviewer.data.utils.ResourceErrorType.Generic
+import com.itj.cryptoviewer.data.utils.isConnectionException
 import com.itj.cryptoviewer.domain.model.Coin
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
  * TODO THURSDAY
- *  Airplane mode = crash?
- *
  *  move mapper tests to correct package
  *  look for todos for tests to update
  *
@@ -35,23 +34,31 @@ class FetchCryptoRepositoryImpl @Inject constructor(
     override val coins: Flow<List<StoredCoin>> = coinDao.getRankedCoins()
 
     override suspend fun requestCryptoInformation(): Resource<List<Coin>> {
-        val response = service.getCoins()
-        response?.let {
-            if (it.isSuccessful) {
-                it.body()?.let { cryptoResponse ->
-                    return cryptoResponse.data?.coins
-                        ?.map { networkCoin ->
-                            val coin = mapperNetToDomain.mapNetworkCoinToDomainCoin(networkCoin)
-                            val storedCoin = mapperNetToStorage.mapNetworkCoinToStoredCoin(networkCoin)
-                            coinDao.insert(storedCoin)
-                            coin
-                        }
-                        ?.let { coinList -> Success(coinList) }
-                        ?: Error(Generic)
-                } ?: return Error(Generic)
-            } else {
+        try {
+            val response = service.getCoins()
+            response?.let {
+                if (it.isSuccessful) {
+                    it.body()?.let { cryptoResponse ->
+                        return cryptoResponse.data?.coins
+                            ?.map { networkCoin ->
+                                val coin = mapperNetToDomain.mapNetworkCoinToDomainCoin(networkCoin)
+                                val storedCoin = mapperNetToStorage.mapNetworkCoinToStoredCoin(networkCoin)
+                                coinDao.insert(storedCoin)
+                                coin
+                            }
+                            ?.let { coinList -> Success(coinList) }
+                            ?: Error(Generic)
+                    } ?: return Error(Generic)
+                } else {
+                    return Error(Connection)
+                }
+            } ?: return Error(Generic)
+
+        } catch (e: Exception) {
+            if (e.isConnectionException()) {
                 return Error(Connection)
             }
-        } ?: return Error(Generic)
+            return Error(Generic)
+        }
     }
 }

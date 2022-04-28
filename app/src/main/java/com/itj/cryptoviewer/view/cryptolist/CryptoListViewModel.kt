@@ -27,10 +27,8 @@ class CryptoListViewModel @Inject constructor(
         callCryptoListUseCase()
     }
 
-    // TODO consume and display generic/network error messages
     private fun callCryptoListUseCase() {
         viewModelScope.launch {
-//            fetchCryptoList()
             _error.value = when (fetchCryptoList()) {
                 is SuccessResult -> Empty
                 is GenericErrorResult -> GenericError
