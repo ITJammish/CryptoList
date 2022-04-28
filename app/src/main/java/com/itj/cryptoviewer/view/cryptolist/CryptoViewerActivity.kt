@@ -3,11 +3,13 @@ package com.itj.cryptoviewer.view.cryptolist
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.itj.cryptoviewer.R
 import com.itj.cryptoviewer.di.viewmodel.ViewModelFactory
+import com.itj.cryptoviewer.view.cryptolist.CryptoListViewModel.ErrorMessage.Empty
 import com.itj.cryptoviewer.view.cryptolist.list.CryptoSummaryRecyclerViewAdapter
 import dagger.android.AndroidInjection
 import javax.inject.Inject
@@ -55,8 +57,13 @@ class CryptoViewerActivity : AppCompatActivity() {
     }
 
     private fun bindData() {
-        viewModel.testData.observe(this) {
+        viewModel.cryptoListData.observe(this) {
             cryptoListAdapter.setData(it)
+        }
+
+        viewModel.error.observe(this) {
+            if (it is Empty) return@observe
+            Toast.makeText(this, getString(it.resId), Toast.LENGTH_LONG).show()
         }
     }
 }

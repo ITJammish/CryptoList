@@ -1,4 +1,4 @@
-package com.itj.cryptoviewer.data
+package com.itj.cryptoviewer.data.mapper
 
 import android.util.Log
 import com.itj.cryptoviewer.data.database.StoredCoin

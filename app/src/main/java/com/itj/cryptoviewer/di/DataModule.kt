@@ -1,7 +1,9 @@
 package com.itj.cryptoviewer.di
 
-import com.itj.cryptoviewer.data.FetchCryptoRepository
-import com.itj.cryptoviewer.data.FetchCryptoRepositoryImpl
+import com.itj.cryptoviewer.data.repository.CryptoListDataRepository
+import com.itj.cryptoviewer.data.repository.CryptoListDataRepositoryImpl
+import com.itj.cryptoviewer.data.repository.FetchCryptoRepository
+import com.itj.cryptoviewer.data.repository.FetchCryptoRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton
@@ -14,4 +16,10 @@ abstract class DataModule {
     abstract fun provideFetchCryptoRepository(
         fetchCryptoRepositoryImpl: FetchCryptoRepositoryImpl,
     ): FetchCryptoRepository
+
+    @Binds
+    @Singleton
+    abstract fun provideCryptoListDataRepository(
+        cryptoListDataRepositoryImpl: CryptoListDataRepositoryImpl,
+    ): CryptoListDataRepository
 }

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">CryptoViewer</string>
     <string name="refresh">Refresh</string>
+    <string name="generic_error_message">Something went wrong. Try again.</string>
+    <string name="network_error_message">Something went wrong. Please check your network and try again.</string>
     <string name="content_description_crypto_currency_icon">Crypto currency icon.</string>
 </resources>

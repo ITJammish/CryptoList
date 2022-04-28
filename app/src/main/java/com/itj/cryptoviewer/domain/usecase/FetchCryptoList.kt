@@ -1,6 +1,6 @@
-package com.itj.cryptoviewer.domain
+package com.itj.cryptoviewer.domain.usecase
 
-import com.itj.cryptoviewer.data.FetchCryptoRepository
+import com.itj.cryptoviewer.data.repository.FetchCryptoRepository
 import com.itj.cryptoviewer.data.utils.ResourceErrorType.Connection
 import com.itj.cryptoviewer.data.utils.fold
 import com.itj.cryptoviewer.domain.model.Coin

@@ -1,8 +1,10 @@
 package com.itj.cryptoviewer.data
 
 import com.google.common.truth.Truth.assertThat
+import com.itj.cryptoviewer.data.mapper.NetworkCoinToDomainCoinMapper
 import com.itj.cryptoviewer.data.model.CryptoServiceGetCoinsResponse
 import com.itj.cryptoviewer.data.model.GetCoinsCoin
+import com.itj.cryptoviewer.data.repository.FetchCryptoRepositoryImpl
 import com.itj.cryptoviewer.data.utils.Resource
 import com.itj.cryptoviewer.data.utils.ResourceErrorType
 import com.itj.cryptoviewer.domain.model.Coin
@@ -16,6 +18,7 @@ import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 
+// todo update
 class FetchCryptoRepositoryImplTest {
 
     private companion object {

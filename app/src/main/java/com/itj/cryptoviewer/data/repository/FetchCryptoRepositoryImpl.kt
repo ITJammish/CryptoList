@@ -1,11 +1,13 @@
-package com.itj.cryptoviewer.data
+package com.itj.cryptoviewer.data.repository
 
+import com.itj.cryptoviewer.data.CryptoService
 import com.itj.cryptoviewer.data.database.CoinDao
 import com.itj.cryptoviewer.data.database.StoredCoin
+import com.itj.cryptoviewer.data.mapper.NetworkCoinToDomainCoinMapper
+import com.itj.cryptoviewer.data.mapper.NetworkCoinToStoredCoinMapper
 import com.itj.cryptoviewer.data.utils.Resource
 import com.itj.cryptoviewer.data.utils.Resource.Error
 import com.itj.cryptoviewer.data.utils.Resource.Success
-import com.itj.cryptoviewer.data.utils.ResourceErrorType
 import com.itj.cryptoviewer.data.utils.ResourceErrorType.Connection
 import com.itj.cryptoviewer.data.utils.ResourceErrorType.Generic
 import com.itj.cryptoviewer.domain.model.Coin
@@ -14,13 +16,14 @@ import javax.inject.Inject
 
 /**
  * TODO THURSDAY
- *  Connect View to Flow! -> second UseCase
- *  Toast on error
+ *  Airplane mode = crash?
+ *
+ *  move mapper tests to correct package
+ *  look for todos for tests to update
  *
  *  Later...
  *  Second mapper UnitTest
  *  README
- *  Second screen?
  */
 class FetchCryptoRepositoryImpl @Inject constructor(
     private val service: CryptoService,
@@ -29,7 +32,7 @@ class FetchCryptoRepositoryImpl @Inject constructor(
     private val coinDao: CoinDao,
 ) : FetchCryptoRepository {
 
-    val coins: Flow<List<StoredCoin>> = coinDao.getRankedCoins()
+    override val coins: Flow<List<StoredCoin>> = coinDao.getRankedCoins()
 
     override suspend fun requestCryptoInformation(): Resource<List<Coin>> {
         val response = service.getCoins()

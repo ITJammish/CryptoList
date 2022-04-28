@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CoinDao {
-    @Query("SELECT * FROM coin_bank ORDER BY rank DESC")
+    @Query("SELECT * FROM coin_bank ORDER BY rank ASC")
     fun getRankedCoins(): Flow<List<StoredCoin>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

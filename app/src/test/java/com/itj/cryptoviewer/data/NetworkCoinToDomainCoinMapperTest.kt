@@ -2,6 +2,7 @@ package com.itj.cryptoviewer.data
 
 import android.util.Log
 import com.google.common.truth.Truth.assertThat
+import com.itj.cryptoviewer.data.mapper.NetworkCoinToDomainCoinMapper
 import com.itj.cryptoviewer.data.model.GetCoinsCoin
 import com.itj.cryptoviewer.domain.model.Coin
 import io.mockk.every

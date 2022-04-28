@@ -1,10 +1,11 @@
 package com.itj.cryptoviewer.domain
 
 import com.google.common.truth.Truth.assertThat
-import com.itj.cryptoviewer.data.FetchCryptoRepository
+import com.itj.cryptoviewer.data.repository.FetchCryptoRepository
 import com.itj.cryptoviewer.data.utils.Resource
 import com.itj.cryptoviewer.data.utils.ResourceErrorType
 import com.itj.cryptoviewer.domain.model.Coin
+import com.itj.cryptoviewer.domain.usecase.FetchCryptoList
 import com.itj.cryptoviewer.domain.utils.UseCaseResult
 import io.mockk.coEvery
 import io.mockk.coVerify

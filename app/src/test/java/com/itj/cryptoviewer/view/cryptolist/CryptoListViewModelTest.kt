@@ -3,8 +3,8 @@ package com.itj.cryptoviewer.view.cryptolist
 import com.google.common.truth.Truth.assertThat
 import com.itj.cryptoviewer.ViewModelTestBase
 import com.itj.cryptoviewer.data.model.GetCoinsCoin
-import com.itj.cryptoviewer.domain.FetchCryptoList
 import com.itj.cryptoviewer.domain.model.Coin
+import com.itj.cryptoviewer.domain.usecase.FetchCryptoList
 import com.itj.cryptoviewer.domain.utils.UseCaseResult
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -13,6 +13,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Test
 
+// todo update
 @ExperimentalCoroutinesApi
 class CryptoListViewModelTest : ViewModelTestBase() {
 
@@ -41,7 +42,7 @@ class CryptoListViewModelTest : ViewModelTestBase() {
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.testData.value).isEqualTo(coinsResponseList)
+        assertThat(subject.cryptoListData.value).isEqualTo(coinsResponseList)
     }
 
     @Test
@@ -53,7 +54,7 @@ class CryptoListViewModelTest : ViewModelTestBase() {
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.testData.value).isEqualTo(emptyList<Coin>())
+        assertThat(subject.cryptoListData.value).isEqualTo(emptyList<Coin>())
     }
 
     @Test
@@ -65,7 +66,7 @@ class CryptoListViewModelTest : ViewModelTestBase() {
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.testData.value).isEqualTo(emptyList<Coin>())
+        assertThat(subject.cryptoListData.value).isEqualTo(emptyList<Coin>())
     }
 
     @Test
@@ -77,7 +78,7 @@ class CryptoListViewModelTest : ViewModelTestBase() {
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.testData.value).isEqualTo(emptyList<GetCoinsCoin>())
+        assertThat(subject.cryptoListData.value).isEqualTo(emptyList<GetCoinsCoin>())
 
         subject.fetchData()
 
@@ -85,7 +86,7 @@ class CryptoListViewModelTest : ViewModelTestBase() {
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.testData.value).isEqualTo(coinsResponseList)
+        assertThat(subject.cryptoListData.value).isEqualTo(coinsResponseList)
     }
 
     private fun instantiateSubject(advanceUntilIdle: Boolean = true) {
