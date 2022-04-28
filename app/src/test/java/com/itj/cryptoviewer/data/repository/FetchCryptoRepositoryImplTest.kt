@@ -1,24 +1,24 @@
-package com.itj.cryptoviewer.data
+package com.itj.cryptoviewer.data.repository
 
 import com.google.common.truth.Truth.assertThat
+import com.itj.cryptoviewer.data.CryptoService
+import com.itj.cryptoviewer.data.database.CoinDao
+import com.itj.cryptoviewer.data.database.StoredCoin
 import com.itj.cryptoviewer.data.mapper.NetworkCoinToDomainCoinMapper
+import com.itj.cryptoviewer.data.mapper.NetworkCoinToStoredCoinMapper
 import com.itj.cryptoviewer.data.model.CryptoServiceGetCoinsResponse
 import com.itj.cryptoviewer.data.model.GetCoinsCoin
-import com.itj.cryptoviewer.data.repository.FetchCryptoRepositoryImpl
 import com.itj.cryptoviewer.data.utils.Resource
 import com.itj.cryptoviewer.data.utils.ResourceErrorType
 import com.itj.cryptoviewer.domain.model.Coin
-import io.mockk.coEvery
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Response
 
-// todo update
 class FetchCryptoRepositoryImplTest {
 
     private companion object {
@@ -26,13 +26,20 @@ class FetchCryptoRepositoryImplTest {
     }
 
     private val mockDomainCoin = mockk<Coin>()
+    private val mockStoredCoin = mockk<StoredCoin>()
     private val mockNetCoin = mockk<GetCoinsCoin>().also {
         every { it.name } returns NET_COIN_NAME
     }
     private val mockCryptoServiceGetCoinsResponse = mockk<CryptoServiceGetCoinsResponse>()
+    private val mockkFlow = mockk<Flow<List<StoredCoin>>>()
 
     private val mockService = mockk<CryptoService>()
-    private val mockMapper = mockk<NetworkCoinToDomainCoinMapper>()
+    private val mockNetworkCoinToDomainCoinMapper = mockk<NetworkCoinToDomainCoinMapper>()
+    private val mockNetworkCoinToStoredCoinMapper = mockk<NetworkCoinToStoredCoinMapper>()
+    private val mockCoinDao = mockk<CoinDao>().also {
+        every { it.getRankedCoins() } returns mockkFlow
+        coEvery { it.insert(mockStoredCoin) } returns Unit
+    }
 
     private lateinit var subject: FetchCryptoRepositoryImpl
     private lateinit var result: Resource<List<Coin>>
@@ -41,9 +48,18 @@ class FetchCryptoRepositoryImplTest {
     fun setUp() {
         subject = FetchCryptoRepositoryImpl(
             mockService,
-            mockMapper
+            mockNetworkCoinToDomainCoinMapper,
+            mockNetworkCoinToStoredCoinMapper,
+            mockCoinDao,
         )
-        every { mockMapper.mapNetworkCoinToDomainCoin(mockNetCoin) } returns mockDomainCoin
+        every { mockNetworkCoinToDomainCoinMapper.mapNetworkCoinToDomainCoin(mockNetCoin) } returns mockDomainCoin
+        every { mockNetworkCoinToStoredCoinMapper.mapNetworkCoinToStoredCoin(mockNetCoin) } returns mockStoredCoin
+    }
+
+    @Test
+    fun subjectInitTest() {
+        verify { mockCoinDao.getRankedCoins() }
+        assertThat(subject.coins).isEqualTo(mockkFlow)
     }
 
     @Test
@@ -55,7 +71,13 @@ class FetchCryptoRepositoryImplTest {
             result = subject.requestCryptoInformation()
         }
 
-        verify { mockMapper.mapNetworkCoinToDomainCoin(mockNetCoin) }
+        verify {
+            mockNetworkCoinToDomainCoinMapper.mapNetworkCoinToDomainCoin(mockNetCoin)
+            mockNetworkCoinToStoredCoinMapper.mapNetworkCoinToStoredCoin(mockNetCoin)
+        }
+        coVerify {
+            mockCoinDao.insert(mockStoredCoin)
+        }
         assertThat(result).isEqualTo(Resource.Success(listOf(mockDomainCoin)))
     }
 
@@ -68,7 +90,7 @@ class FetchCryptoRepositoryImplTest {
             result = subject.requestCryptoInformation()
         }
 
-        verify(exactly = 0) { mockMapper.mapNetworkCoinToDomainCoin(mockNetCoin) }
+        verify(exactly = 0) { mockNetworkCoinToDomainCoinMapper.mapNetworkCoinToDomainCoin(mockNetCoin) }
         assertThat(result).isEqualTo(Resource.Error(ResourceErrorType.Generic))
     }
 

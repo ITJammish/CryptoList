@@ -5,7 +5,6 @@ import com.itj.cryptoviewer.data.database.StoredCoin
 import com.itj.cryptoviewer.data.model.GetCoinsCoin
 import javax.inject.Inject
 
-// TODO unit test
 class NetworkCoinToStoredCoinMapper @Inject constructor() {
 
     internal fun mapNetworkCoinToStoredCoin(networkCoin: GetCoinsCoin): StoredCoin {

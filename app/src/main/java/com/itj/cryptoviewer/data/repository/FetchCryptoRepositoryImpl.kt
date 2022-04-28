@@ -15,15 +15,6 @@ import com.itj.cryptoviewer.domain.model.Coin
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-/**
- * TODO THURSDAY
- *  move mapper tests to correct package
- *  look for todos for tests to update
- *
- *  Later...
- *  Second mapper UnitTest
- *  README
- */
 class FetchCryptoRepositoryImpl @Inject constructor(
     private val service: CryptoService,
     private val mapperNetToDomain: NetworkCoinToDomainCoinMapper,

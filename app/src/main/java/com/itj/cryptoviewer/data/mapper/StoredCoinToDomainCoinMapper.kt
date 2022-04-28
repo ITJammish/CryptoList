@@ -4,7 +4,6 @@ import com.itj.cryptoviewer.data.database.StoredCoin
 import com.itj.cryptoviewer.domain.model.Coin
 import javax.inject.Inject
 
-// todo unit test
 class StoredCoinToDomainCoinMapper @Inject constructor() {
 
     internal fun mapStoredCoinToDomainCoin(storedCoin: StoredCoin): Coin {

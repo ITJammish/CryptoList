@@ -1,19 +1,19 @@
 package com.itj.cryptoviewer.view.cryptolist
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.google.common.truth.Truth.assertThat
 import com.itj.cryptoviewer.ViewModelTestBase
-import com.itj.cryptoviewer.data.model.GetCoinsCoin
 import com.itj.cryptoviewer.domain.model.Coin
+import com.itj.cryptoviewer.domain.usecase.ConnectViewToDataSource
 import com.itj.cryptoviewer.domain.usecase.FetchCryptoList
 import com.itj.cryptoviewer.domain.utils.UseCaseResult
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.mockk
+import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import org.junit.Before
 import org.junit.Test
 
-// todo update
 @ExperimentalCoroutinesApi
 class CryptoListViewModelTest : ViewModelTestBase() {
 
@@ -29,12 +29,35 @@ class CryptoListViewModelTest : ViewModelTestBase() {
     private val coinsNetworkResponse = mockk<UseCaseResult.NetworkErrorResult>()
 
     private val mockFetchCryptoList = mockk<FetchCryptoList>()
+    private val mockConnectViewToDataSource = mockk<ConnectViewToDataSource>()
 
     private lateinit var subject: CryptoListViewModel
 
+    @Before
+    fun setUp() {
+        mockkStatic("androidx.lifecycle.FlowLiveDataConversions")
+
+        mockConnectViewToDataSource.also {
+            every { it.invoke() } returns mockk<Flow<List<Coin>>>().also {
+                every { it.asLiveData() } returns mockk<LiveData<List<Coin>>>().also {
+                    every { it.value } returns coinsResponseList
+                }
+            }
+        }
+    }
+
+    @Test
+    fun initSubject_cryptoListDataMatchesDatabaseData() {
+        instantiateSubject()
+
+        coVerify {
+            mockConnectViewToDataSource.invoke()
+        }
+        assertThat(subject.cryptoListData.value).isEqualTo(coinsResponseList)
+    }
+
     @Test
     fun getTestData_SuccessResult() {
-        every { coinsSuccessResponse.value } returns coinsResponseList
         coEvery { mockFetchCryptoList.invoke() } returns coinsSuccessResponse
 
         instantiateSubject()
@@ -42,7 +65,7 @@ class CryptoListViewModelTest : ViewModelTestBase() {
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.cryptoListData.value).isEqualTo(coinsResponseList)
+        assertThat(subject.error.value).isEqualTo(CryptoListViewModel.ErrorMessage.Empty)
     }
 
     @Test
@@ -54,7 +77,7 @@ class CryptoListViewModelTest : ViewModelTestBase() {
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.cryptoListData.value).isEqualTo(emptyList<Coin>())
+        assertThat(subject.error.value).isEqualTo(CryptoListViewModel.ErrorMessage.GenericError)
     }
 
     @Test
@@ -66,19 +89,18 @@ class CryptoListViewModelTest : ViewModelTestBase() {
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.cryptoListData.value).isEqualTo(emptyList<Coin>())
+        assertThat(subject.error.value).isEqualTo(CryptoListViewModel.ErrorMessage.NetworkError)
     }
 
     @Test
     fun fetchData() {
-        every { coinsSuccessResponse.value } returnsMany listOf(emptyList(), coinsResponseList)
         coEvery { mockFetchCryptoList.invoke() } returns coinsSuccessResponse
         instantiateSubject()
         // Invoke on subject.init()
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.cryptoListData.value).isEqualTo(emptyList<GetCoinsCoin>())
+        assertThat(subject.error.value).isEqualTo(CryptoListViewModel.ErrorMessage.Empty)
 
         subject.fetchData()
 
@@ -86,11 +108,11 @@ class CryptoListViewModelTest : ViewModelTestBase() {
         coVerify {
             mockFetchCryptoList.invoke()
         }
-        assertThat(subject.cryptoListData.value).isEqualTo(coinsResponseList)
+        assertThat(subject.error.value).isEqualTo(CryptoListViewModel.ErrorMessage.Empty)
     }
 
     private fun instantiateSubject(advanceUntilIdle: Boolean = true) {
-        subject = CryptoListViewModel(mockFetchCryptoList)
+        subject = CryptoListViewModel(mockFetchCryptoList, mockConnectViewToDataSource)
         if (advanceUntilIdle) {
             coroutineTestRule.runCurrent()
         }

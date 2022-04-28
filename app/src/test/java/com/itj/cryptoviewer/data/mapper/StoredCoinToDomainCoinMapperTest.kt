@@ -1,17 +1,14 @@
-package com.itj.cryptoviewer.data
+package com.itj.cryptoviewer.data.mapper
 
-import android.util.Log
-import com.google.common.truth.Truth.assertThat
-import com.itj.cryptoviewer.data.mapper.NetworkCoinToDomainCoinMapper
-import com.itj.cryptoviewer.data.model.GetCoinsCoin
+import com.google.common.truth.Truth
+import com.itj.cryptoviewer.data.database.StoredCoin
 import com.itj.cryptoviewer.domain.model.Coin
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import org.junit.Before
 import org.junit.Test
 
-class NetworkCoinToDomainCoinMapperTest {
+class StoredCoinToDomainCoinMapperTest {
 
     private companion object {
         const val UUID = "uuid"
@@ -20,16 +17,12 @@ class NetworkCoinToDomainCoinMapperTest {
         const val COLOR = "color"
         const val ICON_URL = "iconUrl"
         const val PRICE = "price"
-        const val OVERFLOW_PRICE = "1.23456789"
-        const val EXPECTED_CONCAT_PRICE = "1.23"
         const val CHANGE = "change"
-        const val OVERFLOW_CHANGE = "2.23456789"
-        const val EXPECTED_CONCAT_CHANGE = "2.23"
         const val SPARKLINE = "sparkline"
         const val COIN_RANKING_URL = "coinrankingUrl"
     }
 
-    private val mockNetCoin = mockk<GetCoinsCoin>().also {
+    private val mockStoredCoin = mockk<StoredCoin>().also {
         every { it.uuid } returns UUID
         every { it.symbol } returns SYMBOL
         every { it.name } returns NAME
@@ -53,32 +46,17 @@ class NetworkCoinToDomainCoinMapperTest {
         every { it.coinrankingUrl } returns COIN_RANKING_URL
     }
 
-    private lateinit var subject: NetworkCoinToDomainCoinMapper
+    private lateinit var subject: StoredCoinToDomainCoinMapper
     private lateinit var result: Coin
 
     @Before
     fun setUp() {
-        mockkStatic(Log::class)
-        every { Log.e("CryptoSummaryRecyclerViewAdapter", any()) } returns 0
-
-        subject = NetworkCoinToDomainCoinMapper()
+        subject = StoredCoinToDomainCoinMapper()
     }
 
     @Test
-    fun mapNetworkCoinToDomainCoin() {
-        result = subject.mapNetworkCoinToDomainCoin(mockNetCoin)
-        assertThat(result).isEqualTo(mockDomainCoin)
-    }
-
-    @Test
-    fun mapNetworkCoinToDomainCoin_withOverFlowValues() {
-        every { mockNetCoin.price } returns OVERFLOW_PRICE
-        every { mockDomainCoin.price } returns EXPECTED_CONCAT_PRICE
-        every { mockNetCoin.change } returns OVERFLOW_CHANGE
-        every { mockDomainCoin.change } returns EXPECTED_CONCAT_CHANGE
-
-        result = subject.mapNetworkCoinToDomainCoin(mockNetCoin)
-
-        assertThat(result).isEqualTo(mockDomainCoin)
+    fun `mapStoredCoinToDomainCoin$app_debug`() {
+        result = subject.mapStoredCoinToDomainCoin(mockStoredCoin)
+        Truth.assertThat(result).isEqualTo(mockDomainCoin)
     }
 }
