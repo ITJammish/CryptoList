@@ -27,7 +27,7 @@ class FetchCryptoRepositoryImpl @Inject constructor(
     override suspend fun requestCryptoInformation(): Resource<List<Coin>> {
         try {
             val response = service.getCoins()
-            response?.let {
+            response.let {
                 if (it.isSuccessful) {
                     it.body()?.let { cryptoResponse ->
                         return cryptoResponse.data?.coins
@@ -43,8 +43,7 @@ class FetchCryptoRepositoryImpl @Inject constructor(
                 } else {
                     return Error(Connection)
                 }
-            } ?: return Error(Generic)
-
+            }
         } catch (e: Exception) {
             if (e.isConnectionException()) {
                 return Error(Connection)

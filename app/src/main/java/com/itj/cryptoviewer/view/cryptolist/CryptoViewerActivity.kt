@@ -5,13 +5,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.itj.cryptoviewer.R
 import com.itj.cryptoviewer.di.viewmodel.ViewModelFactory
 import com.itj.cryptoviewer.view.cryptolist.CryptoListViewModel.ErrorMessage.Empty
 import com.itj.cryptoviewer.view.cryptolist.list.CryptoSummaryRecyclerViewAdapter
 import dagger.android.AndroidInjection
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class CryptoViewerActivity : AppCompatActivity() {
@@ -57,9 +62,9 @@ class CryptoViewerActivity : AppCompatActivity() {
     }
 
     private fun bindData() {
-        viewModel.cryptoListData.observe(this) {
-            cryptoListAdapter.setData(it)
-        }
+        viewModel.cryptoListData.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach { cryptoListAdapter.setData(it) }
+            .launchIn(lifecycleScope)
 
         viewModel.error.observe(this) {
             if (it is Empty) return@observe
