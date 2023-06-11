@@ -2,7 +2,6 @@ package com.itj.cryptoviewer.view.cryptolist.list
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -10,10 +9,10 @@ import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.itj.cryptoviewer.R
+import com.itj.cryptoviewer.databinding.ItemViewCoinSummaryBinding
 import com.itj.cryptoviewer.domain.model.Coin
 import com.itj.cryptoviewer.view.cryptolist.list.CryptoSummaryDiffUtilCallback.ChangePayload.UpdateChange
 import com.itj.cryptoviewer.view.cryptolist.list.CryptoSummaryDiffUtilCallback.ChangePayload.UpdatePrice
-import kotlinx.android.synthetic.main.item_view_coin_summary.view.*
 import javax.inject.Inject
 
 class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adapter<CryptoSummaryViewHolder>() {
@@ -21,8 +20,9 @@ class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adap
     private var data: List<Coin> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CryptoSummaryViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_view_coin_summary, parent, false)
-        return CryptoSummaryViewHolder(itemView)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = ItemViewCoinSummaryBinding.inflate(layoutInflater, parent, false)
+        return CryptoSummaryViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: CryptoSummaryViewHolder, position: Int) {
@@ -55,25 +55,25 @@ class CryptoSummaryRecyclerViewAdapter @Inject constructor() : RecyclerView.Adap
     }
 }
 
-class CryptoSummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class CryptoSummaryViewHolder(private val binding: ItemViewCoinSummaryBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(coin: Coin) {
         itemView.setBackgroundColor(Color.parseColor(coin.color.withTranslucency()))
-        itemView.coin_name_view.text = coin.name
+        binding.coinNameView.text = coin.name
         fetchAndBindIcon(coin.iconUrl)
-        itemView.coin_symbol_view.text = coin.symbol
+        binding.coinSymbolView.text = coin.symbol
         bindMarketValue(coin.price)
         bindMarketChange(coin.change)
     }
 
     fun bindMarketValue(coinMarketValue: String?) {
-        itemView.coin_market_value.text = coinMarketValue?.let { "$$it" } ?: "NA"
+        binding.coinMarketValue.text = coinMarketValue?.let { "$$it" } ?: "NA"
     }
 
     fun bindMarketChange(coinChange: String?) {
         val formattedChange = coinChange ?: "NA"
 
-        with(itemView.coin_change) {
+        with(binding.coinChange) {
             text = formattedChange
             coinChange?.let {
                 val textColor = itemView.context.getColor(
@@ -91,7 +91,7 @@ class CryptoSummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
     private fun fetchAndBindIcon(iconUrl: String?) {
         iconUrl?.let {
             val imageLoader = ImageLoader.Builder(itemView.context)
-                .componentRegistry { add(SvgDecoder(itemView.context)) }
+                .components { add(SvgDecoder.Factory()) }
                 .build()
 
             val request = ImageRequest.Builder(itemView.context)
@@ -100,7 +100,7 @@ class CryptoSummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
                 .placeholder(android.R.drawable.stat_notify_error)
                 .error(android.R.drawable.stat_notify_error)
                 .data(it)
-                .target(itemView.coin_image_view)
+                .target(binding.coinImageView)
                 .build()
 
             imageLoader.enqueue(request)

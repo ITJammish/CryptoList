@@ -1,22 +1,20 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
 }
-// todo The 'kotlin-android-extensions' Gradle plugin is deprecated. Please use this migration guide (https://goo.gle/kotlin-android-extensions-deprecation) to start working with View Binding (https://developer.android.com/topic/libraries/view-binding) and the 'kotlin-parcelize' plugin.
 
 def apiKeyPropertiesFile = rootProject.file("apiKey.properties")
 def apiKeyProperties = new Properties()
 apiKeyProperties.load(new FileInputStream(apiKeyPropertiesFile))
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "com.itj.cryptoviewer"
         minSdk 27
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -25,6 +23,9 @@ android {
         buildConfigField("String", "API_KEY", "\"${apiKeyProperties['cryptoApiKey']}\"")
     }
 
+    buildFeatures {
+        viewBinding true
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -32,54 +33,54 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
+    namespace 'com.itj.cryptoviewer'
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.activity:activity-ktx:1.4.0'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.1'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.activity:activity-ktx:1.7.2'
 
-    def room_version = "2.4.2"
+    def room_version = "2.5.1"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
-    def dagger_version = "2.41"
+    def dagger_version = '2.46.1'
     implementation "com.google.dagger:dagger-android:$dagger_version"
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
 
-    def kotlinx_coroutines_version = "1.6.1"
+    def kotlinx_coroutines_version = '1.7.1'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
 
     def retrofit_version = "2.9.0"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    implementation "com.google.code.gson:gson:$retrofit_version"
+    implementation 'com.google.code.gson:gson:2.10.1'
 
-    def coil_version = "1.2.0"
+    def coil_version = '2.4.0'
     implementation "io.coil-kt:coil:$coil_version"
     implementation "io.coil-kt:coil-svg:$coil_version"
 
-    def mockK_version = "1.12.3"
+    def mockK_version = '1.13.5'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation "com.google.truth:truth:1.1.3"
+    testImplementation 'com.google.truth:truth:1.1.4'
     testImplementation "io.mockk:mockk:$mockK_version"
     testImplementation "io.mockk:mockk-agent-jvm:$mockK_version"
-    testImplementation 'androidx.arch.core:core-testing:2.1.0'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation "androidx.room:room-testing:$room_version"
 }

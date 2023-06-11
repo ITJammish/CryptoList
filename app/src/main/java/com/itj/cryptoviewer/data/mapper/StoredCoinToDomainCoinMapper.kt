@@ -6,17 +6,17 @@ import javax.inject.Inject
 
 class StoredCoinToDomainCoinMapper @Inject constructor() {
 
-    internal fun mapStoredCoinToDomainCoin(storedCoin: StoredCoin): Coin {
-        return Coin(
-            uuid = storedCoin.uuid,
-            symbol = storedCoin.symbol,
-            name = storedCoin.name,
-            color = storedCoin.color,
-            iconUrl = storedCoin.iconUrl,
-            price = storedCoin.price,
-            change = storedCoin.change,
-            sparkline = storedCoin.sparkline,
-            coinrankingUrl = storedCoin.coinrankingUrl,
+    internal fun mapStoredCoinToDomainCoin(storedCoin: StoredCoin): Coin = with(storedCoin) {
+        Coin(
+            uuid = uuid,
+            symbol = symbol,
+            name = name,
+            color = color,
+            iconUrl = iconUrl,
+            price = price,
+            change = change,
+            sparkline = sparkline,
+            coinrankingUrl = coinrankingUrl,
         )
     }
 }

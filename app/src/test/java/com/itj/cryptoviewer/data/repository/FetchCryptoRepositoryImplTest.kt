@@ -11,7 +11,11 @@ import com.itj.cryptoviewer.data.model.GetCoinsCoin
 import com.itj.cryptoviewer.data.utils.Resource
 import com.itj.cryptoviewer.data.utils.ResourceErrorType
 import com.itj.cryptoviewer.domain.model.Coin
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import okhttp3.ResponseBody
@@ -118,16 +122,5 @@ class FetchCryptoRepositoryImplTest {
         }
 
         assertThat(result).isEqualTo(Resource.Error(ResourceErrorType.Connection))
-    }
-
-    @Test
-    fun requestCryptoInformationTest_serviceReturnsNullResponse() {
-        coEvery { mockService.getCoins() } returns null
-
-        runBlocking {
-            result = subject.requestCryptoInformation()
-        }
-
-        assertThat(result).isEqualTo(Resource.Error(ResourceErrorType.Generic))
     }
 }

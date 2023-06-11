@@ -9,8 +9,8 @@ open class CryptoViewerApplication : DaggerApplication() {
 
     lateinit var appComponent: AppComponent
 
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        appComponent = DaggerAppComponent.builder().application(this).build()
-        return appComponent
-    }
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> =
+        DaggerAppComponent.builder().application(this).build().also {
+            appComponent = it
+        }
 }
