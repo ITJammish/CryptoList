@@ -12,9 +12,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.itj.cryptoviewer.R
 import com.itj.cryptoviewer.di.viewmodel.ViewModelFactory
-import com.itj.cryptoviewer.view.cryptolist.CryptoListViewModel.ErrorMessage.Empty
+import com.itj.cryptoviewer.view.cryptolist.CryptoListViewModel.ErrorMessage.GenericError
+import com.itj.cryptoviewer.view.cryptolist.CryptoListViewModel.ErrorMessage.NetworkError
 import com.itj.cryptoviewer.view.cryptolist.list.CryptoSummaryRecyclerViewAdapter
 import dagger.android.AndroidInjection
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -62,13 +64,24 @@ class CryptoViewerActivity : AppCompatActivity() {
     }
 
     private fun bindData() {
-        viewModel.cryptoListData.flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .onEach { cryptoListAdapter.setData(it) }
-            .launchIn(lifecycleScope)
+        with(viewModel) {
+            cryptoListData.safeCollect { cryptoListAdapter.setData(it) }
 
-        viewModel.error.observe(this) {
-            if (it is Empty) return@observe
-            Toast.makeText(this, getString(it.resId), Toast.LENGTH_LONG).show()
+            error.safeCollect {
+                when (it) {
+                    GenericError,
+                    NetworkError ->
+                        Toast.makeText(this@CryptoViewerActivity, getString(it.resId), Toast.LENGTH_LONG).show()
+
+                    else -> Unit
+                }
+            }
         }
+    }
+
+    private fun <T> Flow<T>.safeCollect(block: (T) -> Unit) {
+        flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .onEach { block(it) }
+            .launchIn(lifecycleScope)
     }
 }

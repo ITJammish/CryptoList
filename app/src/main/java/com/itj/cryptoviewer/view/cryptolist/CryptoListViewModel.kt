@@ -1,7 +1,5 @@
 package com.itj.cryptoviewer.view.cryptolist
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.itj.cryptoviewer.R
@@ -15,6 +13,7 @@ import com.itj.cryptoviewer.view.cryptolist.CryptoListViewModel.ErrorMessage.Emp
 import com.itj.cryptoviewer.view.cryptolist.CryptoListViewModel.ErrorMessage.GenericError
 import com.itj.cryptoviewer.view.cryptolist.CryptoListViewModel.ErrorMessage.NetworkError
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,12 +22,10 @@ class CryptoListViewModel @Inject constructor(
     connectViewToDataSource: ConnectViewToDataSource,
 ) : ViewModel() {
 
-    // TODO use state instead of flat data
-    // Add loading state val
     val cryptoListData: Flow<List<Coin>> = connectViewToDataSource()
-    val error: LiveData<ErrorMessage>
+    val error: Flow<ErrorMessage>
         get() = _error
-    private val _error = MutableLiveData<ErrorMessage>()
+    private val _error = MutableSharedFlow<ErrorMessage>()
 
     init {
         callCryptoListUseCase()
@@ -40,11 +37,13 @@ class CryptoListViewModel @Inject constructor(
 
     private fun callCryptoListUseCase() {
         viewModelScope.launch {
-            _error.value = when (fetchCryptoList()) {
-                is SuccessResult -> Empty
-                is GenericErrorResult -> GenericError
-                is NetworkErrorResult -> NetworkError
-            }
+            _error.emit(
+                when (fetchCryptoList()) {
+                    is SuccessResult -> Empty
+                    is GenericErrorResult -> GenericError
+                    is NetworkErrorResult -> NetworkError
+                }
+            )
         }
     }
 
