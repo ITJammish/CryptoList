@@ -3,7 +3,8 @@
 Ever wanted to keep tabs on the top cryptocurrencies in real time? This app, powered by
 the [Coinranking API](https://developers.coinranking.com/api), fetches and displays details about
 the top 5 highest market value Cryptocurrencies.
-<img src="Screenshot_20220428_150311.png" alt="CryptoViewer home screen screenshot" width="100">
+
+<img src="Screenshot_20220428_150311.png" alt="CryptoViewer home screen screenshot" width="300">
 
 Written purely for the purpose of demonstrating my coding style, I have written this simple app to
 give examples of clean architecture, use of MVVM and use of technologies including:
